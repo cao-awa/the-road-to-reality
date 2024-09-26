@@ -1,6 +1,6 @@
 package com.github.cao.awa.apricot.mathematic.base;
 
-import com.github.cao.awa.apricot.anntation.Stable;
+import com.github.cao.awa.apricot.annotations.Stable;
 
 /**
  * An util using to convert identifier and bytes.
