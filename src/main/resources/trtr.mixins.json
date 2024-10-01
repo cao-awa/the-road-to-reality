@@ -1,28 +1,20 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "com.github.cao.awa.trtr.mixin",
-    "compatibilityLevel": "JAVA_17",
-    "mixins": [
-        "advancement.AdvancementMixin",
-        "block.BlockEntityMixin",
-        "block.campfire.CampfireBlockEntityMixin",
-        "block.campfire.CampfireBlockMixin",
-        "chunk.ThreadedAnvilChunkStorageInvoker",
-        "chunk.ThreadedAnvilChunkStorageMixin",
-        "entity.xp.ExperienceOrbEntityMixin",
-        "item.ItemsMixin",
-        "item.stack.ItemStackMixin",
-        "recipe.RecipeManagerInvoker",
-        "recipe.RecipeManagerMixin",
-        "server.MinecraftServerSessionAccessor",
-        "server.world.ServerWorldMixin"
-    ],
-    "client": [
-        "item.renderer.BuiltinModelItemRendererMixin",
-        "item.renderer.ItemRendererMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.cao.awa.trtr.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "datapack.DataPackContentsMixin",
+    "item.ItemMixin",
+    "item.stack.ItemStackMixin",
+    "player.PlayerEntityMixin",
+    "recipe.RecipeManagerAccessor"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

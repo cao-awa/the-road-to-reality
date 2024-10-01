@@ -26,14 +26,10 @@
             "com.github.cao.awa.trtr.TrtrMod"
         ],
         "client": [
-            "com.github.cao.awa.trtr.TrtrClient",
-            "bot.inker.inkrender.InkerRender"
+          "com.github.cao.awa.trtr.TrtrClient"
         ],
         "server": [
             "com.github.cao.awa.trtr.TrtrServer"
-        ],
-        "fabric-datagen": [
-            "com.github.cao.awa.trtr.data.gen.TrtrDataGen"
         ]
     },
     "mixins": [
@@ -46,7 +42,7 @@
     "depends": {
         "fabricloader": ">=0.14.21",
         "fabric-api": "*",
-        "minecraft": "1.20.x",
+      "minecraft": "1.21.x",
         "java": ">=17"
     },
     "suggests": {

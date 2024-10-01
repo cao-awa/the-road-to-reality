@@ -1,4 +1,7 @@
 {
+    "item.trtr.stone.size": "Size：%s",
+    "item.trtr.stone.sharpness": "Sharpness：%s",
+
     "item.trtr.iron_hammer": "Iron hammer",
     "item.trtr.stone_hammer": "Stone hammer",
     "item.trtr.wooden_hammer": "Wooden hammer",

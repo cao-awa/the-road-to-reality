@@ -1,0 +1,13 @@
+{
+  "target": "minecraft:flint",
+  "components": [
+    {
+      "type": "trtr:stone_size",
+      "value": 60
+    },
+    {
+      "type": "trtr:sharpness",
+      "value": 60
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "type": "trtr:handcraft_forging",
+  "input": {
+    "ingredients": {
+      "main": {
+        "item": "minecraft:stone"
+      },
+      "off": {
+        "item": "minecraft:stone"
+      }
+    },
+    "do_consumes": {
+      "main": 1,
+      "off": 0
+    }
+  },
+  "result": [
+    {
+      "id": "minecraft:bedrock",
+      "count": 1
+    }
+  ],
+  "do_consume": {
+    "main": 1
+  }
+}

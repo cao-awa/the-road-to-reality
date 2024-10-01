@@ -1,21 +1,35 @@
-package com.github.cao.awa.trtr.pair.item;
+package com.github.cao.awa.trtr.pair.item
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.item.ItemStack
+import net.minecraft.network.RegistryByteBuf
 
-public record ItemStackPair(ItemStack main, ItemStack off) {
-    public void write(PacketByteBuf buf) {
-        buf.writeItemStack(main());
-        buf.writeItemStack(off());
-    }
+@JvmRecord
+data class ItemStackPair(val main: ItemStack, val off: ItemStack) {
+    companion object {
+        @JvmStatic
+        fun encode(buf: RegistryByteBuf, ingredients: ItemStackPair) {
+            ItemStack.PACKET_CODEC.encode(buf, ingredients.main)
+            ItemStack.PACKET_CODEC.encode(buf, ingredients.off)
+        }
 
-    public static ItemStackPair create(PacketByteBuf buf) {
-        ItemStack mainStack = buf.readItemStack();
-        ItemStack offStack = buf.readItemStack();
+        @JvmStatic
+        fun decode(buf: RegistryByteBuf): ItemStackPair {
+            val main = ItemStack.PACKET_CODEC.decode(buf)
+            val off = ItemStack.PACKET_CODEC.decode(buf)
 
-        return new ItemStackPair(
-                mainStack,
-                offStack
-        );
+            return ItemStackPair(
+                main,
+                off
+            )
+        }
+
+        @JvmStatic
+        fun forGetterMain(): RecordCodecBuilder<ItemStackPair, ItemStack> =
+            ItemStack.CODEC.fieldOf("main").forGetter(ItemStackPair::main)
+
+        @JvmStatic
+        fun forGetterOff(): RecordCodecBuilder<ItemStackPair, ItemStack> =
+            ItemStack.CODEC.fieldOf("off").forGetter(ItemStackPair::off)
     }
 }
