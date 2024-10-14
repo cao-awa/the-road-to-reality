@@ -67,4 +67,10 @@ public class TrtrMod implements ModInitializer {
             debugger.accept(message, p1.get(), p2.get(), p3.get(), p4.get(), p5.get());
         }
     }
+
+    public static void debug(String message, Supplier<Object> p1, Supplier<Object> p2, Supplier<Object> p3, Supplier<Object> p4, Supplier<Object> p5, Supplier<Object> p6, StrObjConsumer6 debugger) {
+        if (enableDebugs) {
+            debugger.accept(message, p1.get(), p2.get(), p3.get(), p4.get(), p5.get(), p6.get());
+        }
+    }
 }

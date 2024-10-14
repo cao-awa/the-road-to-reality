@@ -1,12 +1,15 @@
 package com.github.cao.awa.trtr.recipe.handcraft.forging;
 
 import com.github.cao.awa.catheter.pair.IntegerPair;
+import com.github.cao.awa.trtr.TrtrMod;
 import com.github.cao.awa.trtr.pair.ingredient.IngredientPair;
 import com.github.cao.awa.trtr.recipe.TrtrRecipeSerializer;
 import com.github.cao.awa.trtr.recipe.TrtrRecipeType;
 import com.github.cao.awa.trtr.recipe.handcraft.HandcraftRecipe;
 import com.github.cao.awa.trtr.recipe.handcraft.HandcraftRecipeInput;
 import com.github.cao.awa.trtr.recipe.handcraft.HandcraftRecipeMakings;
+import com.github.cao.awa.trtr.recipe.handcraft.result.HandcraftRecipeCompletedResult;
+import com.github.cao.awa.trtr.recipe.handcraft.result.HandcraftRecipeResult;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
@@ -20,8 +23,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class HandcraftForgingRecipe extends HandcraftRecipe {
-    public HandcraftForgingRecipe(HandcraftRecipeMakings input, List<ItemStack> result) {
-        super(input, result);
+    public HandcraftForgingRecipe(HandcraftRecipeMakings input, List<HandcraftRecipeResult> results) {
+        super(input, results);
     }
 
     @Override
@@ -85,12 +88,16 @@ public class HandcraftForgingRecipe extends HandcraftRecipe {
     }
 
     @Override
-    public void tickCrafting(@NotNull World world, @NotNull PlayerEntity user, @NotNull Consumer<List<ItemStack>> results) {
-
+    public void tickCrafting(@NotNull World world, @NotNull PlayerEntity user, @NotNull Consumer<List<HandcraftRecipeResult>> results) {
+        for (HandcraftRecipeResult result : getResults()) {
+            ItemStack resultStack = result.result(user);
+            TrtrMod.itemInjectManager.injectComponent(resultStack, result.components());
+            results.accept(List.of(HandcraftRecipeCompletedResult.of(resultStack)));
+        }
     }
 
     @Override
-    public void finishingCraft(@NotNull World world, @NotNull PlayerEntity user, @NotNull Consumer<List<ItemStack>> results) {
+    public void finishingCraft(@NotNull World world, @NotNull PlayerEntity user, @NotNull Consumer<List<HandcraftRecipeResult>> results) {
 
     }
 }

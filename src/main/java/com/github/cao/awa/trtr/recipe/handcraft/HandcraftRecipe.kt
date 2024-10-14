@@ -6,6 +6,7 @@ import com.github.cao.awa.trtr.mixin.recipe.RecipeManagerAccessor
 import com.github.cao.awa.trtr.pair.item.ItemStackPair
 import com.github.cao.awa.trtr.recipe.TrtrRecipeSerializer
 import com.github.cao.awa.trtr.recipe.TrtrRecipeType
+import com.github.cao.awa.trtr.recipe.handcraft.result.HandcraftRecipeResult
 import com.github.cao.awa.trtr.recipe.match.PatternTestableRecipe
 import com.github.cao.awa.trtr.recipe.player.HandcraftingPlayer
 import com.google.errorprone.annotations.DoNotCall
@@ -22,7 +23,7 @@ import java.util.*
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
-abstract class HandcraftRecipe(val input: HandcraftRecipeMakings, val result: List<ItemStack>) :
+abstract class HandcraftRecipe(val input: HandcraftRecipeMakings, val results: MutableList<HandcraftRecipeResult>) :
     Recipe<HandcraftRecipeInput>, PatternTestableRecipe {
     override fun matches(input: HandcraftRecipeInput, world: World): Boolean {
         return false
@@ -46,7 +47,7 @@ abstract class HandcraftRecipe(val input: HandcraftRecipeMakings, val result: Li
 
     override fun getType(): RecipeType<*> = TrtrRecipeType.HANDCRAFT_FORGING
 
-    fun tickCraft(world: World, user: PlayerEntity, results: Consumer<List<ItemStack>>) {
+    fun tickCraft(world: World, user: PlayerEntity, results: Consumer<List<HandcraftRecipeResult>>) {
         user as HandcraftingPlayer
         if (user.handcraftInput() == null) {
             val input = HandcraftRecipeInput(
@@ -85,26 +86,26 @@ abstract class HandcraftRecipe(val input: HandcraftRecipeMakings, val result: Li
         return successes
     }
 
-    abstract fun tickCrafting(world: World, user: PlayerEntity, results: Consumer<List<ItemStack>>)
+    abstract fun tickCrafting(world: World, user: PlayerEntity, results: Consumer<List<HandcraftRecipeResult>>)
 
-    abstract fun finishingCraft(world: World, user: PlayerEntity, results: Consumer<List<ItemStack>>)
+    abstract fun finishingCraft(world: World, user: PlayerEntity, results: Consumer<List<HandcraftRecipeResult>>)
 
     companion object {
         @JvmStatic
         fun <T : HandcraftRecipe> decode(
             buf: RegistryByteBuf,
-            creator: BiFunction<HandcraftRecipeMakings, List<ItemStack>, T>
+            creator: BiFunction<HandcraftRecipeMakings, List<HandcraftRecipeResult>, T>
         ): T {
             return creator.apply(
                 TrtrPacketCodec.HANDCRAFT_RECIPE_MAKINGS.decode(buf),
-                ItemStack.LIST_PACKET_CODEC.decode(buf)
+                TrtrPacketCodec.HANDCRAFT_RECIPE_RESULT_LIST.decode(buf)
             )
         }
 
         @JvmStatic
         fun encode(buf: RegistryByteBuf, value: HandcraftRecipe) {
             TrtrPacketCodec.HANDCRAFT_RECIPE_MAKINGS.encode(buf, value.input)
-            ItemStack.LIST_PACKET_CODEC.encode(buf, value.result)
+            TrtrPacketCodec.HANDCRAFT_RECIPE_RESULT_LIST.encode(buf, value.results)
         }
 
         @JvmStatic
@@ -112,8 +113,8 @@ abstract class HandcraftRecipe(val input: HandcraftRecipeMakings, val result: Li
             TrtrCodec.HANDCRAFT_RECIPE_INPUT.fieldOf("input").forGetter(HandcraftRecipe::input)
 
         @JvmStatic
-        fun <T : HandcraftRecipe> forGetterResult(): RecordCodecBuilder<T, List<ItemStack>> =
-            ItemStack.CODEC.listOf().fieldOf("result").forGetter(HandcraftRecipe::result)
+        fun <T : HandcraftRecipe> forGetterResult(): RecordCodecBuilder<T, List<HandcraftRecipeResult>> =
+            TrtrCodec.HANDCRAFT_RECIPE_RESULT.listOf().fieldOf("results").forGetter(HandcraftRecipe::results)
 
         @JvmStatic
         fun canCraft(world: World, user: PlayerEntity): Optional<HandcraftRecipe> {

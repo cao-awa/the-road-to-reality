@@ -1,6 +1,6 @@
 package com.github.cao.awa.trtr.components;
 
-import com.google.gson.JsonElement;
+import com.github.cao.awa.trtr.components.value.TrtrValueCreator;
 import com.mojang.serialization.Codec;
 import net.minecraft.component.ComponentType;
 import net.minecraft.network.RegistryByteBuf;
@@ -9,11 +9,9 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-
 public record TrtrComponentType<T>(Codec<T> codec,
                                    PacketCodec<? super RegistryByteBuf, T> packetCodec,
-                                   Function<JsonElement, T> valueCreator,
+                                   TrtrValueCreator<T> valueCreator,
                                    String type
 ) implements ComponentType<T> {
     public String toString() {

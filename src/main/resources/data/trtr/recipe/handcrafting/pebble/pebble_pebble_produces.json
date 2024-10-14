@@ -3,24 +3,28 @@
   "input": {
     "ingredients": {
       "main": {
-        "item": "minecraft:stone"
+        "item": "minecraft:flint"
       },
       "off": {
-        "item": "minecraft:stone"
+        "item": "minecraft:flint"
       }
     },
     "do_consumes": {
-      "main": 1,
-      "off": 0
+      "main": 0,
+      "off": 1
     }
   },
-  "result": [
+  "results": [
     {
-      "id": "minecraft:bedrock",
-      "count": 1
+      "hand": "off",
+      "count": 1,
+      "property": [
+        {
+          "type": "trtr:stone_size",
+          "action": "minus",
+          "value": 1
+        }
+      ]
     }
-  ],
-  "do_consume": {
-    "main": 1
-  }
+  ]
 }

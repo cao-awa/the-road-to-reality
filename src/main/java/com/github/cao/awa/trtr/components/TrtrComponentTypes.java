@@ -1,6 +1,7 @@
 package com.github.cao.awa.trtr.components;
 
 import com.github.cao.awa.apricot.util.collection.ApricotCollectionFactor;
+import com.github.cao.awa.trtr.components.value.TrtrValueCreator;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -9,7 +10,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class TrtrComponentTypes {
@@ -27,7 +27,7 @@ public class TrtrComponentTypes {
             JsonElement::getAsInt
     );
 
-    public static <T> TrtrComponentType<T> register(String id, UnaryOperator<TrtrComponentTypeBuilder<T>> builderOperator, Function<JsonElement, T> valueCreator) {
+    public static <T> TrtrComponentType<T> register(String id, UnaryOperator<TrtrComponentTypeBuilder<T>> builderOperator, TrtrValueCreator<T> valueCreator) {
         TrtrComponentType<T> type = builderOperator.apply(new TrtrComponentTypeBuilder<T>(id).valueCreator(valueCreator)).build();
         Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of("trtr", id), type);
         types.put(id, type);
@@ -52,6 +52,6 @@ public class TrtrComponentTypes {
 
     @SuppressWarnings("unchecked")
     public static <T> T createValue(String type, JsonElement element) {
-        return (T) types.get(type).valueCreator().apply(element);
+        return (T) types.get(type).valueCreator().createValue(element);
     }
 }

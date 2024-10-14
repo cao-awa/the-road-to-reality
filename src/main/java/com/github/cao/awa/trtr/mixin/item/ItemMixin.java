@@ -1,6 +1,7 @@
 package com.github.cao.awa.trtr.mixin.item;
 
 import com.github.cao.awa.trtr.recipe.handcraft.HandcraftRecipe;
+import com.github.cao.awa.trtr.recipe.handcraft.result.HandcraftRecipeResult;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -49,8 +50,7 @@ public class ItemMixin {
                         results -> {
                             // Should not resulting in here, handcraft cannot finish in 0 ticks.
                             LOGGER.warn(
-                                    "The handcrafting finishing unexpectedly at startup (0 usage ticks)",
-                                    new Throwable().fillInStackTrace()
+                                    new Throwable("The handcrafting finishing unexpectedly at startup (0 usage ticks)").fillInStackTrace()
                             );
                         }
                 );
@@ -72,8 +72,8 @@ public class ItemMixin {
                             player,
                             results -> {
                                 // Feedback the craft result to player.
-                                for (ItemStack result : results) {
-                                    player.giveItemStack(result);
+                                for (HandcraftRecipeResult result : results) {
+                                    player.giveItemStack(result.result(player));
                                 }
                             }
                     );

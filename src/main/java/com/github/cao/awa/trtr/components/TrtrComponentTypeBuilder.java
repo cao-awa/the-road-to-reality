@@ -1,6 +1,6 @@
 package com.github.cao.awa.trtr.components;
 
-import com.google.gson.JsonElement;
+import com.github.cao.awa.trtr.components.value.TrtrValueCreator;
 import com.mojang.serialization.Codec;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 public class TrtrComponentTypeBuilder<T> {
     @NotNull
@@ -18,7 +17,7 @@ public class TrtrComponentTypeBuilder<T> {
     private Codec<T> codec;
     @Nullable
     private PacketCodec<? super RegistryByteBuf, T> packetCodec;
-    private Function<JsonElement, T> valueCreator;
+    private TrtrValueCreator<T> valueCreator;
 
     public TrtrComponentTypeBuilder(@NotNull String type) {
         this.type = type;
@@ -34,7 +33,7 @@ public class TrtrComponentTypeBuilder<T> {
         return this;
     }
 
-    public TrtrComponentTypeBuilder<T> valueCreator(Function<JsonElement, T> valueCreator) {
+    public TrtrComponentTypeBuilder<T> valueCreator(TrtrValueCreator<T> valueCreator) {
         this.valueCreator = valueCreator;
         return this;
     }
