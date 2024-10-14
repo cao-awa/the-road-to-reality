@@ -89,11 +89,15 @@ public class HandcraftForgingRecipe extends HandcraftRecipe {
 
     @Override
     public void tickCrafting(@NotNull World world, @NotNull PlayerEntity user, @NotNull Consumer<List<HandcraftRecipeResult>> results) {
-        for (HandcraftRecipeResult result : getResults()) {
-            ItemStack resultStack = result.result(user);
-            TrtrMod.itemInjectManager.injectComponent(resultStack, result.components());
-            results.accept(List.of(HandcraftRecipeCompletedResult.of(resultStack)));
-        }
+        whenInRange(user, inRanges -> {
+            for (HandcraftRecipeResult result : inRanges) {
+                ItemStack resultStack = result.result(user);
+                TrtrMod.itemInjectManager.injectComponent(resultStack, result.components());
+                results.accept(List.of(HandcraftRecipeCompletedResult.of(resultStack)));
+
+                stopCraft(world, user);
+            }
+        });
     }
 
     @Override

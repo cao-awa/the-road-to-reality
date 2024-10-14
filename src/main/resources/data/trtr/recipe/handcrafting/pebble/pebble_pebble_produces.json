@@ -18,6 +18,10 @@
     {
       "hand": "off",
       "count": 1,
+      "range": {
+        "min": 60,
+        "max": 120
+      },
       "property": [
         {
           "type": "trtr:stone_size",

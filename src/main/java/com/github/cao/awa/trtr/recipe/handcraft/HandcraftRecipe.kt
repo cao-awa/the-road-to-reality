@@ -23,7 +23,10 @@ import java.util.*
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
-abstract class HandcraftRecipe(val input: HandcraftRecipeMakings, val results: MutableList<HandcraftRecipeResult>) :
+abstract class HandcraftRecipe(
+    val input: HandcraftRecipeMakings,
+    val results: MutableList<HandcraftRecipeResult>
+) :
     Recipe<HandcraftRecipeInput>, PatternTestableRecipe {
     override fun matches(input: HandcraftRecipeInput, world: World): Boolean {
         return false
@@ -46,6 +49,16 @@ abstract class HandcraftRecipe(val input: HandcraftRecipeMakings, val results: M
     override fun getSerializer(): RecipeSerializer<*> = TrtrRecipeSerializer.HANDCRAFT_FORGING
 
     override fun getType(): RecipeType<*> = TrtrRecipeType.HANDCRAFT_FORGING
+
+    fun whenInRange(user: PlayerEntity, action: Consumer<List<HandcraftRecipeResult>>) {
+        user as HandcraftingPlayer
+
+        action.accept(
+            this.results.filter {
+                it.validateRange().isIn(user.handcraftInput().usageTicks)
+            }.toList()
+        )
+    }
 
     fun tickCraft(world: World, user: PlayerEntity, results: Consumer<List<HandcraftRecipeResult>>) {
         user as HandcraftingPlayer

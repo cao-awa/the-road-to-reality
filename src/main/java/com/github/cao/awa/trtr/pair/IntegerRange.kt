@@ -37,4 +37,8 @@ data class IntegerRange(val min: Int, val max: Int) {
         fun forGetterMax(): RecordCodecBuilder<IntegerRange, Int> =
             Codec.INT.fieldOf("max").forGetter(IntegerRange::max)
     }
+
+    fun isIn(target: Int): Boolean {
+        return target in min..max
+    }
 }

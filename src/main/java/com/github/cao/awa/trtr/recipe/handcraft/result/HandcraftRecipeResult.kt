@@ -2,6 +2,7 @@ package com.github.cao.awa.trtr.recipe.handcraft.result
 
 import com.github.cao.awa.trtr.codec.TrtrPacketCodec
 import com.github.cao.awa.trtr.datapack.inject.item.component.ItemPropertyInjectComponent
+import com.github.cao.awa.trtr.pair.IntegerRange
 import io.netty.handler.codec.DecoderException
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -32,6 +33,8 @@ interface HandcraftRecipeResult {
             }
         }
     }
+
+    fun validateRange(): IntegerRange
 
     fun result(player: PlayerEntity): ItemStack
 
