@@ -89,7 +89,16 @@ public class ItemMixin {
     public void stopUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo ci) {
         if (!world.isClient() && user instanceof PlayerEntity player) {
             // Stop the crafts when stopped using item.
-            HandcraftRecipe.stopCraft(world, player);
+            HandcraftRecipe.stopCraft(
+                    world,
+                    player,
+                    results -> {
+                        // Feedback the craft result to player.
+                        for (HandcraftRecipeResult result : results) {
+                            player.giveItemStack(result.result(player));
+                        }
+                    }
+            );
         }
     }
 }

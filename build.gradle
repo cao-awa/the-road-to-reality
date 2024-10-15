@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.8.1'
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.21'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.21'
 }
 
 archivesBaseName = project.archives_base_name + "-" + project.minecraft_version
@@ -63,7 +63,7 @@ dependencies {
     shadow 'org.reflections:reflections:0.10.2'
     shadow "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
-    shadow 'com.github.cao.awa:catheter:1.0.37'
+    shadow 'com.github.cao.awa:catheter:1.0.41'
     shadow 'com.github.cao.awa:sinuatum:1.0.10'
 }
 

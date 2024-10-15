@@ -130,7 +130,7 @@ public class TrtrCodec {
             HAND.fieldOf("hand").forGetter(HandcraftRecipeVaryResult::hand),
             Codec.INT.fieldOf("count").orElse(-1).forGetter(HandcraftRecipeVaryResult::count),
             INT_RANGE.fieldOf("range").forGetter(HandcraftRecipeVaryResult::range),
-            TrtrCodec.ITEM_PROPERTY_INJECT_COMPONENT.listOf().fieldOf("property").forGetter(HandcraftRecipeVaryResult::property)
+            TrtrCodec.ITEM_PROPERTY_INJECT_COMPONENT.listOf().fieldOf("properties").forGetter(HandcraftRecipeVaryResult::property)
     ).apply(instance, HandcraftRecipeVaryResult::new));
 
     public static final Codec<HandcraftRecipeResult> HANDCRAFT_RECIPE_RESULT = Codec.xor(

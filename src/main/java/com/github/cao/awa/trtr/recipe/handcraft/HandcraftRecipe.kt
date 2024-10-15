@@ -1,8 +1,10 @@
 package com.github.cao.awa.trtr.recipe.handcraft
 
+import com.github.cao.awa.catheter.Catheter
 import com.github.cao.awa.trtr.codec.TrtrCodec
 import com.github.cao.awa.trtr.codec.TrtrPacketCodec
 import com.github.cao.awa.trtr.mixin.recipe.RecipeManagerAccessor
+import com.github.cao.awa.trtr.pair.IntegerRange
 import com.github.cao.awa.trtr.pair.item.ItemStackPair
 import com.github.cao.awa.trtr.recipe.TrtrRecipeSerializer
 import com.github.cao.awa.trtr.recipe.TrtrRecipeType
@@ -23,11 +25,19 @@ import java.util.*
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
-abstract class HandcraftRecipe(
-    val input: HandcraftRecipeMakings,
-    val results: MutableList<HandcraftRecipeResult>
-) :
+abstract class HandcraftRecipe(val input: HandcraftRecipeMakings, val results: MutableList<HandcraftRecipeResult>) :
     Recipe<HandcraftRecipeInput>, PatternTestableRecipe {
+    private var resultMaximumTime: Int = 0
+
+    init {
+        this.resultMaximumTime = Catheter.of(this.results)
+            .varyTo(HandcraftRecipeResult::validateRange)
+            .varyTo(IntegerRange::max)
+            .sort(Integer::compare)
+            .optionalFirst()
+            .get()
+    }
+
     override fun matches(input: HandcraftRecipeInput, world: World): Boolean {
         return false
     }
@@ -60,7 +70,7 @@ abstract class HandcraftRecipe(
         )
     }
 
-    fun tickCraft(world: World, user: PlayerEntity, results: Consumer<List<HandcraftRecipeResult>>) {
+    fun tickCraft(world: World, user: PlayerEntity, resultTo: Consumer<List<HandcraftRecipeResult>>) {
         user as HandcraftingPlayer
         if (user.handcraftInput() == null) {
             val input = HandcraftRecipeInput(
@@ -77,11 +87,13 @@ abstract class HandcraftRecipe(
             user.handcraftInput().tickUsage()
         }
 
-        if (user.isUsingItem) {
+        if (user.handcraftInput().usageTicks == this.resultMaximumTime) {
+            finishingCraft(world, user, resultTo)
+        } else if (user.isUsingItem) {
             if (checkInput(world, user)) {
-                tickCrafting(world, user, results)
+                tickCrafting(world, user, resultTo)
             } else {
-                stopCraft(world, user)
+                finishingCraft(world, user, resultTo)
             }
         }
     }
@@ -91,17 +103,45 @@ abstract class HandcraftRecipe(
 
         var successes = true
 
-        user.handcraftInput().ingredients.let {
-            successes = successes && user.mainHandStack == it.main
-            successes = successes && user.offHandStack == it.off
+        this.input.doConsumes.let { consumes ->
+            user.handcraftInput().ingredients.let {
+                successes = successes && user.mainHandStack == it.main && user.mainHandStack.count >= consumes.first
+                successes = successes && user.offHandStack == it.off && user.offHandStack.count >= consumes.second
+            }
         }
 
         return successes
     }
 
-    abstract fun tickCrafting(world: World, user: PlayerEntity, results: Consumer<List<HandcraftRecipeResult>>)
+    abstract fun tickCrafting(world: World, user: PlayerEntity, resultTo: Consumer<List<HandcraftRecipeResult>>)
 
-    abstract fun finishingCraft(world: World, user: PlayerEntity, results: Consumer<List<HandcraftRecipeResult>>)
+    fun consumeCraft(user: PlayerEntity) {
+        this.input.doConsumes.let {
+            if (it.first > 0) {
+                user.mainHandStack.decrement(it.first)
+            }
+
+            if (it.second > 0) {
+                user.offHandStack.decrement(it.second)
+            }
+        }
+    }
+
+    fun consumeAndCraft(world: World, user: PlayerEntity, resultTo: Consumer<List<HandcraftRecipeResult>>) {
+        this.input.doConsumes.let {
+            if (it.first > 0) {
+                user.mainHandStack.decrement(it.first)
+            }
+
+            if (it.second > 0) {
+                user.offHandStack.decrement(it.second)
+            }
+        }
+
+        stopCraft(world, user, resultTo)
+    }
+
+    abstract fun finishingCraft(world: World, user: PlayerEntity, resultTo: Consumer<List<HandcraftRecipeResult>>)
 
     companion object {
         @JvmStatic
@@ -148,12 +188,19 @@ abstract class HandcraftRecipe(
             return Optional.empty()
         }
 
-
         @JvmStatic
-        fun stopCraft(world: World, user: PlayerEntity) {
+        fun stopCraft(world: World, user: PlayerEntity, resultTo: Consumer<List<HandcraftRecipeResult>>) {
             user as HandcraftingPlayer
 
-            println("STOPPING...: " + user.handcraftInput().usageTicks)
+            if (user.handcraftRecipe() != null) {
+                user.handcraftRecipe().finishingCraft(world, user, resultTo)
+            }
+
+            cleanupCraft(user)
+        }
+
+        fun cleanupCraft(user: PlayerEntity) {
+            user as HandcraftingPlayer
 
             user.handcraftInput(null)
             user.handcraftRecipe(null)
